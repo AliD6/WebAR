@@ -2,15 +2,16 @@
 <html>
   <head>
     <title>WebAR Location Based</title>
+    <!-- جلوگیری از زوم خودکار مرورگر موبایل -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
-    <!-- کامپوننت look-at برای چرخش خودکار پیکان به سمت هدف -->
+    <!-- اضافه کردن کتابخانه برای چرخش پیکان به سمت هدف -->
     <script src="https://unpkg.com/aframe-look-at-component@0.8.0/dist/aframe-look-at-component.min.js"></script>
 
     <style>
-      /* استایل لایه نمایش فاصله روی صفحه */
+      /* استایل پنل پایین صفحه برای نمایش مسافت */
       #ui-container {
         position: absolute;
         bottom: 30px;
@@ -21,7 +22,7 @@
         padding: 12px 24px;
         border-radius: 8px;
         font-family: Arial, sans-serif;
-        font-size: 18px;
+        font-size: 16px;
         font-weight: bold;
         z-index: 999;
         text-align: center;
@@ -31,20 +32,18 @@
   </head>
   <body style="margin: 0; overflow: hidden;">
     
-    <!-- لایه رابط کاربری (UI) برای نمایش فاصله -->
+    <!-- نمایش فاصله به کاربر -->
     <div id="ui-container">
-      فاصله تا هدف: <span id="distance">در حال محاسبه...</span>
+      فاصله تا هدف: <span id="distance">در حال جستجوی GPS...</span>
     </div>
 
     <script>
-      // اسکریپت استخراج فاصله از کتابخانه AR.js
+      // اسکریپت محاسبه و آپدیت زنده فاصله
       window.onload = () => {
         const box = document.getElementById('target-box');
         const distanceSpan = document.getElementById('distance');
 
-        // شنونده رویداد برای آپدیت‌های موقعیت مکانی
         window.addEventListener('gps-camera-update-position', (e) => {
-          // کتابخانه AR.js به صورت خودکار فاصله را محاسبه کرده و در ویژگی شیء قرار می‌دهد
           const distance = box.getAttribute('distance');
           if (distance !== null) {
             distanceSpan.innerText = Math.round(distance) + " متر";
@@ -53,34 +52,37 @@
       };
     </script>
 
+    <!-- تنظیمات AR.js: استفاده از videoTexture برای رفع زوم بدون دستکاری ابعاد -->
     <a-scene 
       vr-mode-ui="enabled: false"
       embedded 
-      arjs='sourceType: webcam; sourceWidth:1280; sourceHeight:960; displayWidth: 1280; displayHeight: 960; debugUIEnabled: false;'>
+      arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false;">
       
-      <!-- دوربین GPS -->
-      <a-camera gps-camera rotation-reader></a-camera>
+      <!-- دوربین مکان‌محور -->
+      <a-camera gps-camera rotation-reader>
+        
+        <!-- پیکان جهت‌نما (حتماً باید داخل دوربین باشد تا همراه شما حرکت کند) -->
+        <!-- position باعث می‌شود پیکان کمی پایین‌تر از مرکز دید شما قرار بگیرد -->
+        <a-entity position="0 -0.5 -2">
+          <a-cone
+            color="yellow"
+            radius-bottom="0.1"
+            radius-top="0"
+            height="0.5"
+            rotation="90 0 0"
+            look-at="#target-box">
+          </a-cone>
+        </a-entity>
 
-      <!-- هدف اصلی (جعبه قرمز) -->
+      </a-camera>
+
+      <!-- جعبه قرمز به عنوان هدف در مختصات مکانی شما -->
       <a-box
         id="target-box"
         gps-entity-place="latitude: 35.6229694; longitude: 51.5003527;"
         material="color: red;"
-        scale="10 10 10">
+        scale="5 5 5">
       </a-box>
-
-      <!-- پیکان سه‌بعدی جهت‌نما -->
-      <!-- این پیکان در پایین دید دوربین قرار می‌گیرد و همیشه به سمت مختصات هدف می‌چرخد -->
-      <a-entity position="0 -1.5 -3">
-        <a-cone
-          color="yellow"
-          radius-bottom="0.2"
-          radius-top="0"
-          height="1"
-          rotation="90 0 0"
-          look-at="#target-box">
-        </a-cone>
-      </a-entity>
 
     </a-scene>
   </body>

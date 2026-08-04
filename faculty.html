@@ -2,15 +2,25 @@
 <html>
   <head>
     <title>WebAR - Faculty Project</title>
-    <!-- جلوگیری از زوم خودکار -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
-    <!-- اسکریپت look-at که هم برای فلش و هم برای چرخش متن به سمت کاربر نیاز است -->
     <script src="https://unpkg.com/aframe-look-at-component@0.8.0/dist/aframe-look-at-component.min.js"></script>
 
     <style>
+      body { margin: 0; overflow: hidden; }
+      .a-canvas { width: 100% !important; height: 100% !important; }
+      video {
+        width: 100vw !important;
+        height: 100vh !important;
+        object-fit: cover !important;
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        margin: 0 !important;
+      }
+
       #ui-container {
         position: absolute;
         bottom: 30px;
@@ -47,35 +57,33 @@
           const camera = document.querySelector('[gps-camera]');
           if (!camera) return;
           const cam3D = camera.object3D;
-          
           const forward = new THREE.Vector3(0, -0.5, -3);
           forward.applyQuaternion(cam3D.quaternion);
-          
           this.el.object3D.position.copy(cam3D.position).add(forward);
         }
       });
     </script>
   </head>
-  <body style="margin: 0; overflow: hidden;">
+  <body>
     
     <div id="ui-container">
-        distance to faculty: <span id="distance">Calculating...</span>
+        Distance to Faculty: <span id="distance">Calculating...</span>
     </div>
 
     <a-scene 
       vr-mode-ui="enabled: false"
       embedded 
-      arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false;">
+      arjs="sourceType: webcam; debugUIEnabled: false;">
       
       <a-camera gps-camera rotation-reader near="0.1" far="1000"></a-camera>
 
       <a-entity floating-arrow look-at="#faculty-text">
         <a-cone
           color="#00ff00"
-          radius-bottom="0.2"
+          radius-bottom="0.15"
           radius-top="0"
-          height="0.8"
-          rotation="-90 0 0">
+          height="0.6"
+          rotation="90 0 0">
         </a-cone>
       </a-entity>
 
@@ -83,10 +91,10 @@
         id="faculty-text"
         value="Electrical Engineering Faculty"
         gps-entity-place="latitude: 35.6229694; longitude: 51.5003527;"
-        scale="15 15 15"
+        scale="3 3 3"
         color="#F4D03F"
         align="center"
-        position="0 3 0"
+        side="double"
         look-at="[gps-camera]">
       </a-text>
 

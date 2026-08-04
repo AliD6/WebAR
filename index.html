@@ -9,6 +9,18 @@
     <script src="https://unpkg.com/aframe-look-at-component@0.8.0/dist/aframe-look-at-component.min.js"></script>
 
     <style>
+      body { margin: 0; overflow: hidden; }
+      .a-canvas { width: 100% !important; height: 100% !important; }
+      video {
+        width: 100vw !important;
+        height: 100vh !important;
+        object-fit: cover !important;
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        margin: 0 !important;
+      }
+
       #ui-container {
         position: absolute;
         bottom: 30px;
@@ -28,7 +40,6 @@
     </style>
 
     <script>
-      // ۱. اسکریپت محاسبه مسافت
       window.onload = () => {
         const box = document.getElementById('target-box');
         const distanceSpan = document.getElementById('distance');
@@ -41,25 +52,19 @@
         });
       };
 
-      // ۲. اسکریپت اختصاصی برای قفل کردن پیکان جلوی دوربین بدون تداخل چرخش
       AFRAME.registerComponent('floating-arrow', {
         tick: function () {
           const camera = document.querySelector('[gps-camera]');
           if (!camera) return;
-          
           const cam3D = camera.object3D;
-          
-          // تنظیم موقعیت: 3 متر جلوتر و کمی پایین‌تر از لنز دوربین
           const forward = new THREE.Vector3(0, -0.5, -3);
           forward.applyQuaternion(cam3D.quaternion);
-          
-          // اعمال موقعیت به پیکان سه‌بعدی
           this.el.object3D.position.copy(cam3D.position).add(forward);
         }
       });
     </script>
   </head>
-  <body style="margin: 0; overflow: hidden;">
+  <body>
     
     <div id="ui-container">
       فاصله تا هدف: <span id="distance">در حال جستجو...</span>
@@ -68,31 +73,25 @@
     <a-scene 
       vr-mode-ui="enabled: false"
       embedded 
-      arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false;">
+      arjs="sourceType: webcam; debugUIEnabled: false;">
       
-      <!-- دوربین -->
       <a-camera gps-camera rotation-reader near="0.1" far="1000"></a-camera>
 
-      <!-- پیکان سه‌بعدی -->
-      <!-- از تگ دوربین خارج شده و توسط اسکریپت floating-arrow جابجا می‌شود -->
       <a-entity floating-arrow look-at="#target-box">
         <a-cone
           color="yellow"
-          radius-bottom="0.2"
+          radius-bottom="0.15"
           radius-top="0"
-          height="0.8"
-          rotation="-90 0 0">
+          height="0.6"
+          rotation="90 0 0">
         </a-cone>
       </a-entity>
 
-      <!-- جعبه قرمز هدف -->
-      <!-- با side: double اگر داخل آن بروید هم رنگ قرمز را می‌بینید -->
       <a-box
         id="target-box"
         gps-entity-place="latitude: 35.6229694; longitude: 51.5003527;"
-        position="0 2 0"
-        material="color: red; side: double; transparent: true; opacity: 0.7;"
-        scale="4 4 4">
+        material="color: red; side: double; transparent: true; opacity: 0.8;"
+        scale="2 2 2">
       </a-box>
 
     </a-scene>

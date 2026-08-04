@@ -2,17 +2,24 @@
 <html>
   <head>
     <title>WebAR Location Based</title>
+    <!-- اضافه کردن تگ ویوپورت برای تنظیم درست ابعاد در موبایل -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
-    <!-- فایل اصلی AR.js که شامل تمام قابلیت‌های GPS است -->
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
   </head>
   <body style="margin: 0; overflow: hidden;">
-    <a-scene embedded arjs='sourceType: webcam; debugUIEnabled: false;'>
+    <!-- اضافه کردن تنظیمات ابعاد تصویر و videoTexture برای رفع مشکل زوم -->
+    <!-- همچنین vr-mode-ui="enabled: false" دکمه VR پایین صفحه را که نیازی نداریم حذف می‌کند -->
+    <a-scene 
+      vr-mode-ui="enabled: false"
+      embedded 
+      arjs='sourceType: webcam; sourceWidth:1280; sourceHeight:960; displayWidth: 1280; displayHeight: 960; videoTexture: true; debugUIEnabled: false;'>
+      
       <!-- دوربین GPS -->
       <a-camera gps-camera rotation-reader></a-camera>
 
       <!-- قرار دادن یک مکعب سه بعدی در موقعیت GPS -->
-      <!-- فراموش نکنید مختصات زیر را به مختصات دقیق خودتان تغییر دهید -->
       <a-box
         gps-entity-place="latitude: 35.6229694; longitude: 51.5003527;"
         material="color: red;"
